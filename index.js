@@ -2,10 +2,12 @@ const express = require('express'); //needs installing
 const app = express();
 const hbs = require('express-handlebars'); //needs installing
 const path = require('path'); //already imported
+const bodyParser = require('body-parser');
 require('dotenv').config();
 const weather = require('./lib/weatherapp'); //importing the function from the weatherapp.js file
 
-
+app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.json();)
 app.use(express.static(path.join(__dirname, 'public')));
 //this is saying store stuff in the public folder?
 
@@ -18,15 +20,19 @@ app.set('view engine', '.hbs');
 //this is setting up a template extension
 
 app.get('/', async(req, res) => {
-    let data = await weather();
-    console.log(data);
-    let temp = data.main.temp;
-    let desc = data.weather[0].description;
-    let humidity = data.main.humidity;
-    let sunset = data.sys.sunset;
-    let name = data.name;
-    res.render('index', {name, temp, desc, humidity, sunset});
+    
+    res.render('index');
 })
+
+app.post('/', async (req, res) => {
+    let city = req.body.city;
+    let response = await weather(city);
+    
+    res.render('index', 
+    {response})
+});
+
+
 
 
 app.listen(8080, () => {
